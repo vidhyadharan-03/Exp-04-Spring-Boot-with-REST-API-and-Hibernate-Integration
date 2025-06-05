@@ -4,6 +4,7 @@
 To develop a Spring Boot application to store and retrieve data from a Movies database using Object Relational Mapping (ORM) with Hibernate and expose it via REST APIs.
 
 ## ALGORITHM:
+```
 Create Spring Boot project with dependencies:
 
 Spring Web
@@ -30,36 +31,120 @@ PUT /movies/{id}
 
 DELETE /movies/{id}
 
+```
 
 ## PROGRAM CODE (Main Files):
 ### application.properties
+```
 spring.datasource.url=jdbc:h2:mem:testdb
 spring.datasource.driverClassName=org.h2.Driver
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
+```
 ### Movie.java
+```
+package com.example.exp4.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class Movie {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
     private String genre;
     private int year;
     private double rating;
 
-    // Getters and Setters
+    public Movie() {
+    }
+
+    public Movie(String title, String genre, int year, double rating) {
+        this.title = title;
+        this.genre = genre;
+        this.year = year;
+        this.rating = rating;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
 }
+
+
+```
 ### MovieRepository.java
-java
-Copy
-Edit
-public interface MovieRepository extends JpaRepository<Movie, Long> {}
+```
+package com.example.exp4.repository;
+
+import com.example.exp4.entity.Movie;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MovieRepository extends JpaRepository<Movie, Long> {
+}
+
+
+```
 ### MovieController.java
+
+```
+package com.example.exp4.controller;
+
+import com.example.exp4.entity.Movie;
+import com.example.exp4.repository.MovieRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
+
     @Autowired
     private MovieRepository repo;
 
@@ -90,12 +175,17 @@ public class MovieController {
             return ResponseEntity.ok(repo.save(movie));
         }).orElse(ResponseEntity.notFound().build());
     }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
+    public ResponseEntity<?> deleteMovie(@PathVariable Long id) {
         return repo.findById(id).map(movie -> {
             repo.delete(movie);
             return ResponseEntity.ok().build();
         }).orElse(ResponseEntity.notFound().build());
     }
+
 }
+
+```
+
+## Result :
+Hence the project is executed successfully with REST API & Hibernate  -Integration
